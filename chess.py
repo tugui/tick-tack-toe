@@ -7,6 +7,7 @@
 import sys
 import copy
 import readchess
+import drawchess
 
 # victory and defeat condition
 DRAW = 0
@@ -184,6 +185,7 @@ def pairMode():
                 blue_step = 0
                 print 'blue step:'
                 while blue_step == 0:
+                    drawchess.drawChessBoard(chessboard)
                     candidates, warp, newChessboard = chess.getChess()
                     if valid(chessboard,newChessboard,COMPUTER):
                         chessboard = copy.deepcopy(newChessboard)
@@ -200,12 +202,12 @@ def pairMode():
                 red_step = 0
                 print 'red step:'
                 while red_step == 0:
+                    drawchess.drawChessBoard(chessboard)
                     candidates, warp, newChessboard = chess.getChess()
                     if valid(chessboard,newChessboard,HUMAN):
                         chessboard = copy.deepcopy(newChessboard)
                         red_step = 1
                 print chessboard
-
 
                 if ifWin(chessboard, HUMAN):
                     result = HUMAN_WIN
@@ -244,6 +246,7 @@ def singleMode():
 
                 computer_step = 0
                 while computer_step == 0:
+                    drawchess.drawChessBoard(chessboard)
                     candidates, warp, newChessboard = chess.getChess()
                     if same(chessboard,newChessboard):
                         if COMPUTER == 1:
@@ -262,6 +265,7 @@ def singleMode():
                 human_step = 0
                 print 'human step:'
                 while human_step == 0:
+                    drawchess.drawChessBoard(chessboard)
                     candidates, warp, newChessboard = chess.getChess()
                     if valid(chessboard,newChessboard,HUMAN):
                         chessboard = copy.deepcopy(newChessboard)
