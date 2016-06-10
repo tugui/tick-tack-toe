@@ -20,7 +20,7 @@ COMPUTER = 1 # red
 # other chess information
 step = -1 # for next place
 red = 0 # for counting red chessmen
-blue = 0 # for counting red chessmen
+blue = 0 # for counting blue chessmen
 
 def computerBestMove(chessboard,alpha,beta):
     global HUMAN_WIN
@@ -173,22 +173,68 @@ def valid(chessboard,newChessboard,role):
     else:
         return False
 
-if __name__=='__main__':
-    '''
-    game flow:
-        camera initialization->
-        chessboard detection->
-        environment setting(offensive position and color judgement)->
-        computer step->
-        waiting for complete->
-        human step->
-        ...
-    '''
+def pairMode():
     result = -2
     chess = readchess.ReadChess()
     while True:
         candidates, warp, newChessboard = chess.getChess()
-        if gameStart(newChessboard) == 1 or gameStart(newChessboard) == 0: # human first
+        if gameStart(newChessboard) == 0: # blue first
+            chessboard = copy.deepcopy(newChessboard)
+            while True:
+                blue_step = 0
+                print 'blue step:'
+                while blue_step == 0:
+                    candidates, warp, newChessboard = chess.getChess()
+                    if valid(chessboard,newChessboard,COMPUTER):
+                        chessboard = copy.deepcopy(newChessboard)
+                        blue_step = 1
+                print chessboard
+
+                if ifWin(chessboard, COMPUTER):
+                    result = COMPUTER_WIN
+                    break
+                if fullBoard(chessboard):
+                    result = DRAW
+                    break
+
+                red_step = 0
+                print 'red step:'
+                while red_step == 0:
+                    candidates, warp, newChessboard = chess.getChess()
+                    if valid(chessboard,newChessboard,HUMAN):
+                        chessboard = copy.deepcopy(newChessboard)
+                        red_step = 1
+                print chessboard
+
+
+                if ifWin(chessboard, HUMAN):
+                    result = HUMAN_WIN
+                    break
+                if fullBoard(chessboard):
+                    result = DRAW
+                    break
+        else:
+            pass
+        if result == COMPUTER_WIN:
+            print 'blue win'
+            sys.exit()
+        elif result == HUMAN_WIN:
+            print 'red win'
+            sys.exit()
+        elif result == DRAW:
+            print 'play even'
+            sys.exit()
+    print 'program fault'
+    sys.exit()
+
+def singleMode():
+    global red
+    global blue
+    result = -2
+    chess = readchess.ReadChess()
+    while True:
+        candidates, warp, newChessboard = chess.getChess()
+        if gameStart(newChessboard) == 1 or gameStart(newChessboard) == 0:
             chessboard = copy.deepcopy(newChessboard)
             while True:
                 print 'computer step:'
@@ -220,6 +266,7 @@ if __name__=='__main__':
                     if valid(chessboard,newChessboard,HUMAN):
                         chessboard = copy.deepcopy(newChessboard)
                         human_step = 1
+                print chessboard
 
                 if ifWin(chessboard, HUMAN):
                     result = HUMAN_WIN
@@ -235,3 +282,26 @@ if __name__=='__main__':
         elif result == HUMAN_WIN:
             print 'human win'
             sys.exit()
+        elif result == DRAW:
+            print 'play even'
+            sys.exit()
+    print 'program fault'
+    sys.exit()
+
+if __name__=='__main__':
+    '''
+    game flow:
+        camera initialization->
+        chessboard detection->
+        environment setting(offensive position and color judgement)->
+        computer step->
+        waiting for complete->
+        human step->
+        ...
+    '''
+    if sys.argv[1] == 'single':
+        singleMode()
+    elif sys.argv[1] == 'pair':
+        pairMode()
+    else:
+        print 'parameter error'
