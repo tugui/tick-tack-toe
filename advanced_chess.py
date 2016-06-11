@@ -7,6 +7,7 @@
 import sys
 import copy
 import readmorechess
+import drawchess
 
 # victory and defeat condition
 DRAW = 0
