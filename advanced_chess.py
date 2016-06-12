@@ -8,11 +8,13 @@ import sys
 import copy
 import readmorechess
 import drawchess
+import numpy as np
+import cv2
 
 # victory and defeat condition
 DRAW = 0
-HUMAN_WIN = -1
-COMPUTER_WIN = 1
+HUMAN_WIN = -5
+COMPUTER_WIN = 5
 
 # role with default value
 HUMAN = -1 # blue
@@ -26,14 +28,14 @@ red_remain = 12
 blue_remain = 12
 
 def computerBestMove(chessboard,alpha,beta):
-    global HUMAN_WIN
+    global COMPUTER_WIN
     global COMPUTER
     global DRAW
     global step
     if fullBoard(chessboard):
         value = DRAW
-    elif ifLinked(chessboard,HUMAN):
-        value = HUMAN_WIN
+    elif ifWin(COMPUTER):
+        value = COMPUTER_WIN
     else:
         value = alpha
         for i in range(81):
@@ -41,7 +43,10 @@ def computerBestMove(chessboard,alpha,beta):
                 break
             if isEmpty(chessboard, i/9, i%9):
                 place(chessboard, i/9, i%9, COMPUTER)
-                nextMove,response = humanBestMove(chessboard, value, beta)
+                backup = copy.deepcopy(chessboard)
+                if ifLinked(backup,COMPUTER):
+                    value += 1
+                nextMove,response = humanBestMove(backup, value, beta)
                 unplace(chessboard, i/9, i%9)
                 if response > value: # find the biggest value
                     value = response
@@ -49,14 +54,14 @@ def computerBestMove(chessboard,alpha,beta):
     return step,value
 
 def humanBestMove(chessboard,alpha,beta):
-    global COMPUTER_WIN
+    global HUMAN_WIN
     global HUMAN
     global DRAW
     global step
     if fullBoard(chessboard):
         value = DRAW
-    elif ifLinked(chessboard,COMPUTER):
-        value = COMPUTER_WIN
+    elif ifWin(HUMAN):
+        value = HUMAN_WIN
     else:
         value = beta
         for i in range(9):
@@ -64,7 +69,10 @@ def humanBestMove(chessboard,alpha,beta):
                 break
             if isEmpty(chessboard, i/9, i%9):
                 place(chessboard, i/9, i%9, HUMAN)
-                step,response = computerBestMove(chessboard,alpha, value)
+                backup = copy.deepcopy(chessboard)
+                if ifLinked(backup,HUMAN):
+                    value -= 1
+                step,response = computerBestMove(backup, alpha, value)
                 unplace(chessboard, i/9, i%9)
                 if response < value: # find the smallest value
                     value = response
@@ -184,24 +192,16 @@ def gameStart(newChessboard):
             elif newChessboard[i][j] == -1:
                 new_blue += 1
     if new_red == 0 and new_blue == 0:
-        COMPUTER = -1 # blue
-        HUMAN = 1
-        red = 0
-        blue = 0
         return 0 # computer first
     elif new_red == 1 and new_blue == 0:
         COMPUTER = -1 # blue
         HUMAN = 1
         red = 1
-        blue = 0
         return 1 # computer second
-    elif new_red == 1 and new_blue == 0:
-        red = 0
+    elif new_red == 0 and new_blue == 1:
         blue = 1
         return 1 # computer second
     else:
-        red = 0
-        blue = 0
         return -1 # error
 
 def same(chessboard,newChessboard):
@@ -243,17 +243,20 @@ def pairMode():
     chess = readmorechess.ReadChess()
     while True:
         candidates, warp, newChessboard = chess.getChess()
-        if gameStart(newChessboard) == 0: # blue first
+        if gameStart(newChessboard) == 0: # red first
             chessboard = copy.deepcopy(newChessboard)
             while True:
-                blue_step = 0
-                print 'blue step:'
-                while blue_step == 0:
+                red_step = 0
+                print 'red step:'
+                while red_step == 0:
                     candidates, warp, newChessboard = chess.getChess()
+                    # cv2.imshow('candidate', candidates)
+                    # cv2.imshow('warp', warp)
+                    # print np.array(newChessboard)
                     if valid(chessboard,newChessboard,COMPUTER):
                         chessboard = copy.deepcopy(newChessboard)
-                        blue_step = 1
-                print chessboard
+                        red_step = 1
+                print np.array(chessboard)
 
                 if ifLinked(chessboard,COMPUTER):
                     clear_operation = 0
@@ -262,23 +265,23 @@ def pairMode():
                         candidates, warp, newChessboard = chess.getChess()
                         if same(chessboard,newChessboard):
                             clear_operation = 1
-                    print chessborad
+                    print np.array(chessboard)
 
-                if ifWin(chessboard, COMPUTER):
+                if ifWin(COMPUTER):
                     result = COMPUTER_WIN
                     break
                 if fullBoard(chessboard):
                     result = DRAW
                     break
 
-                red_step = 0
-                print 'red step:'
-                while red_step == 0:
+                blue_step = 0
+                print 'blue step:'
+                while blue_step == 0:
                     candidates, warp, newChessboard = chess.getChess()
                     if valid(chessboard,newChessboard,HUMAN):
                         chessboard = copy.deepcopy(newChessboard)
-                        red_step = 1
-                print chessboard
+                        blue_step = 1
+                print np.array(chessboard)
 
                 if ifLinked(chessboard,HUMAN):
                     clear_operation = 0
@@ -289,7 +292,7 @@ def pairMode():
                             clear_operation = 1
                     print chessborad
 
-                if ifWin(chessboard, HUMAN):
+                if ifWin(HUMAN):
                     result = HUMAN_WIN
                     break
                 if fullBoard(chessboard):
@@ -320,9 +323,9 @@ def singleMode():
             chessboard = copy.deepcopy(newChessboard)
             while True:
                 print 'computer step:'
-                step,value = computerBestMove(chessboard,HUMAN_WIN,COMPUTER_WIN)
+                step,value = computerBestMove(chessboard,-1,1)
                 place(chessboard, step/9, step%9, COMPUTER)
-                print chessboard
+                print np.array(chessboard)
 
                 computer_step = 0
                 while computer_step == 0:
@@ -334,7 +337,7 @@ def singleMode():
                             blue += 1
                         computer_step = 1
 
-                if ifWin(chessboard, COMPUTER):
+                if ifWin(COMPUTER):
                     result = COMPUTER_WIN
                     break
                 if fullBoard(chessboard):
@@ -348,9 +351,9 @@ def singleMode():
                     if valid(chessboard,newChessboard,HUMAN):
                         chessboard = copy.deepcopy(newChessboard)
                         human_step = 1
-                print chessboard
+                print np.array(chessboard)
 
-                if ifWin(chessboard, HUMAN):
+                if ifWin(HUMAN):
                     result = HUMAN_WIN
                     break
                 if fullBoard(chessboard):

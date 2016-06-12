@@ -8,6 +8,7 @@ import sys
 import copy
 import readchess
 import drawchess
+import numpy as np
 
 # victory and defeat condition
 DRAW = 0
@@ -24,9 +25,6 @@ red = 0 # for counting red chessmen
 blue = 0 # for counting blue chessmen
 
 def computerBestMove(chessboard,alpha,beta):
-    global HUMAN_WIN
-    global COMPUTER
-    global DRAW
     global step
     if fullBoard(chessboard):
         value = DRAW
@@ -47,9 +45,6 @@ def computerBestMove(chessboard,alpha,beta):
     return step,value
 
 def humanBestMove(chessboard,alpha,beta):
-    global COMPUTER_WIN
-    global HUMAN
-    global DRAW
     global step
     if fullBoard(chessboard):
         value = DRAW
@@ -131,13 +126,11 @@ def gameStart(newChessboard):
         red = 1
         blue = 0
         return 1 # computer second
-    elif new_red == 1 and new_blue == 0:
+    elif new_blue == 1 and new_red == 0:
         red = 0
         blue = 1
         return 1 # computer second
     else:
-        red = 0
-        blue = 0
         return -1 # error
 
 def same(chessboard,newChessboard):
@@ -190,7 +183,7 @@ def pairMode():
                     if valid(chessboard,newChessboard,COMPUTER):
                         chessboard = copy.deepcopy(newChessboard)
                         blue_step = 1
-                print chessboard
+                print np.array(chessboard)
 
                 if ifWin(chessboard, COMPUTER):
                     result = COMPUTER_WIN
@@ -207,7 +200,7 @@ def pairMode():
                     if valid(chessboard,newChessboard,HUMAN):
                         chessboard = copy.deepcopy(newChessboard)
                         red_step = 1
-                print chessboard
+                print np.array(chessboard)
 
                 if ifWin(chessboard, HUMAN):
                     result = HUMAN_WIN
@@ -242,7 +235,7 @@ def singleMode():
                 print 'computer step:'
                 step,value = computerBestMove(chessboard,HUMAN_WIN,COMPUTER_WIN)
                 place(chessboard, step/3, step%3, COMPUTER)
-                print chessboard
+                print np.array(chessboard)
 
                 computer_step = 0
                 while computer_step == 0:
@@ -270,7 +263,7 @@ def singleMode():
                     if valid(chessboard,newChessboard,HUMAN):
                         chessboard = copy.deepcopy(newChessboard)
                         human_step = 1
-                print chessboard
+                print np.array(chessboard)
 
                 if ifWin(chessboard, HUMAN):
                     result = HUMAN_WIN

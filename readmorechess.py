@@ -22,7 +22,7 @@ class ReadChess(object):
         # super(ReadChess, self).__init__()
         self.__IMAGE_WIDTH = 48
         self.__IMAGE_HIGHT = 48
-        self.__SIZE = 9
+        self.__SIZE = 8
         self.__CHESSBOARD = chessboard
         if (not('cap' in dir())):
             self.cap = cv2.VideoCapture(0)
@@ -52,8 +52,8 @@ class ReadChess(object):
     def checkColor(self, blur):
         r = self.__IMAGE_HIGHT
         chessboard = self.__CHESSBOARD
-        for i in range(1, 7):
-            for j in range(1, 7):
+        for i in range(1, 8):
+            for j in range(1, 8):
                 p = blur[i * r][j * r]
                 # print p
                 if (chessboard[i][j] < 2):
@@ -63,7 +63,7 @@ class ReadChess(object):
                         chessboard[i][j] = -1
                     elif(p[0] > 200 and p[1] > 200 and p[2] > 200):
                         chessboard[i][j] = 0
-
+                # cv2.circle(blur, (i * r, j * r), 5, (0, 0, 255), -1)
         return chessboard
 
     # classify chessmen
@@ -72,7 +72,7 @@ class ReadChess(object):
 
         # CHESSBOARD = np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
         CHESSBOARD = self.checkColor(blur)
-
+        # cv2.imshow('blur',blur)
         # temp_sum = 0
         # for i in range(len(self.EX_CHESSBOARD)):
         #     for j in range(len(self.EX_CHESSBOARD)):
@@ -102,7 +102,7 @@ class ReadChess(object):
 
         # find the countours
         # if you're using 2.4, you should delete img
-        img, contours0, hierarchy = cv2.findContours(
+        contours0, hierarchy = cv2.findContours(
             thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
         # size of the image
         h, w = frame.shape[:2]
@@ -138,8 +138,8 @@ class ReadChess(object):
         # cv2.imshow('candidates', candidates)
 
         # point to remap
-        points1 = numpy.array([numpy.array([0.0, 0.0], numpy.float32) + numpy.array([432, 0], numpy.float32), numpy.array([0.0, 0.0], numpy.float32),
-                               numpy.array([0.0, 0.0], numpy.float32) + numpy.array([0.0, 432], numpy.float32), numpy.array([0.0, 0.0], numpy.float32) + numpy.array([432, 432], numpy.float32), ], numpy.float32)
+        points1 = numpy.array([numpy.array([0.0, 0.0], numpy.float32) + numpy.array([384, 0], numpy.float32), numpy.array([0.0, 0.0], numpy.float32),
+                               numpy.array([0.0, 0.0], numpy.float32) + numpy.array([0.0, 384], numpy.float32), numpy.array([0.0, 0.0], numpy.float32) + numpy.array([384, 384], numpy.float32), ], numpy.float32)
 
         outerPoints = self.getOuterPoints(big_rectangle)
         points2 = numpy.array(outerPoints, numpy.float32)
