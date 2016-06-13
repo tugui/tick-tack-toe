@@ -80,6 +80,11 @@ def humanBestMove(chessboard,alpha,beta):
     return step,value
 
 def ifLinked(chessboard, role):
+    global red
+    global blue
+    global red_remain
+    global blue_remain
+
     flag = 0
     if chessboard[1][1] == role and chessboard[1][4] == role and chessboard[1][7] == role:
         chessboard[1][1] = chessboard[1][4] = chessboard[1][7] = 0
@@ -250,9 +255,6 @@ def pairMode():
                 print 'red step:'
                 while red_step == 0:
                     candidates, warp, newChessboard = chess.getChess()
-                    # cv2.imshow('candidate', candidates)
-                    # cv2.imshow('warp', warp)
-                    # print np.array(newChessboard)
                     if valid(chessboard,newChessboard,COMPUTER):
                         chessboard = copy.deepcopy(newChessboard)
                         red_step = 1
@@ -290,7 +292,7 @@ def pairMode():
                         candidates, warp, newChessboard = chess.getChess()
                         if same(chessboard,newChessboard):
                             clear_operation = 1
-                    print chessborad
+                    print np.array(chessboard)
 
                 if ifWin(HUMAN):
                     result = HUMAN_WIN
@@ -301,10 +303,10 @@ def pairMode():
         else:
             pass
         if result == COMPUTER_WIN:
-            print 'blue win'
+            print 'red win'
             sys.exit()
         elif result == HUMAN_WIN:
-            print 'red win'
+            print 'blue win'
             sys.exit()
         elif result == DRAW:
             print 'play even'
