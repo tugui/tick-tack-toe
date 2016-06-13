@@ -375,6 +375,12 @@ def singleMode():
     print 'program fault'
     sys.exit()
 
+def testMode():
+    chessboard = [[ 2,2,2,2,2,2,2,2,2],[ 2,0,2,2,0,2,2,0,2],[ 2,2,0,2 -1,2,1,2,2],[ 2,2,2,0 -1,0,2,2,2],[ 2,0,0,0,2,0,1,0,2],[ 2,2,2,0,0,0,2,2,2],[ 2,2,0,2,0,2,0,2,2],[ 2,0,2,2,0,2,2,0,2],[ 2,2,2,2,2,2,2,2,2]]
+    step,value = computerBestMove(chessboard,-1,1)
+    print step
+    print value
+
 if __name__=='__main__':
     '''
     game flow:
@@ -390,5 +396,7 @@ if __name__=='__main__':
         singleMode()
     elif sys.argv[1] == 'pair':
         pairMode()
+    elif sys.argv[1] == 'test':
+        testMode()
     else:
         print 'parameter error'
