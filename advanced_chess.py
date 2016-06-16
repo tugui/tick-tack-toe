@@ -35,9 +35,7 @@ block4 = [48,49,50,56,58,60,64,67,70]
 
 def computerBestMove(chessboard,block,alpha,beta):
     global step
-    if fullBoard(chessboard):
-        value = DRAW
-    elif linked(chessboard, HUMAN):
+    if linked(chessboard, HUMAN):
         value = HUMAN_WIN # end of search
     else:
         value = alpha # from -5 to 5
@@ -58,9 +56,7 @@ def computerBestMove(chessboard,block,alpha,beta):
 
 def humanBestMove(chessboard,block,alpha,beta):
     global step
-    if fullBoard(chessboard):
-        value = DRAW
-    elif linked(chessboard, COMPUTER):
+    if linked(chessboard, COMPUTER):
         value = COMPUTER_WIN # end of search
     else:
         value = beta # from 5 to -5
@@ -211,16 +207,12 @@ def place(chessboard, i, j, role):
 def unplace(chessboard, i, j):
     chessboard[i][j] = 0
 
-def fullBoard(chessboard):
-    global enabled
-    for i in enabled:
-        x = i / 9
-        y = i % 9
-        if chessboard[x][y] == 0:
-            return False
-    return True
+def draw():
+    if red == red_remain and blue == blue_remain:
+        return True
+    return False
 
-def ifWin(role):
+def win(role):
     if role == -1 and blue_remain == 0:
         return True
     elif role == 1 and red_remain == 0:
@@ -341,6 +333,7 @@ def pairMode():
                 red_step = 0
                 print 'red step:'
                 while red_step == 0:
+                    drawchess.drawChessBoard(chessboard)
                     candidates, warp, newChessboard = chess.getChess()
                     if valid(chessboard,newChessboard,COMPUTER):
                         chessboard = copy.deepcopy(newChessboard)
@@ -350,22 +343,25 @@ def pairMode():
                 if clearCondition(chessboard,COMPUTER):
                     clear_operation = 0
                     print 'clear operation:'
+                    drawchess.drawChessBoard(chessboard)
                     while clear_operation == 0:
+                        drawchess.drawChessBoard(chessboard)
                         candidates, warp, newChessboard = chess.getChess()
                         if same(chessboard,newChessboard):
                             clear_operation = 1
                     print np.array(chessboard)
 
-                if ifWin(COMPUTER):
+                if win(COMPUTER):
                     result = COMPUTER_WIN
                     break
-                if fullBoard(chessboard):
+                if draw():
                     result = DRAW
                     break
 
                 blue_step = 0
                 print 'blue step:'
                 while blue_step == 0:
+                    drawchess.drawChessBoard(chessboard)
                     candidates, warp, newChessboard = chess.getChess()
                     if valid(chessboard,newChessboard,HUMAN):
                         chessboard = copy.deepcopy(newChessboard)
@@ -375,16 +371,18 @@ def pairMode():
                 if clearCondition(chessboard,HUMAN):
                     clear_operation = 0
                     print 'clear operation:'
+                    drawchess.drawChessBoard(chessboard)
                     while clear_operation == 0:
+                        drawchess.drawChessBoard(chessboard)
                         candidates, warp, newChessboard = chess.getChess()
                         if same(chessboard,newChessboard):
                             clear_operation = 1
                     print np.array(chessboard)
 
-                if ifWin(HUMAN):
+                if win(HUMAN):
                     result = HUMAN_WIN
                     break
-                if fullBoard(chessboard):
+                if draw():
                     result = DRAW
                     break
         else:
@@ -420,6 +418,7 @@ def singleMode():
 
                 computer_step = 0
                 while computer_step == 0:
+                    drawchess.drawChessBoard(chessboard)
                     candidates, warp, newChessboard = chess.getChess()
                     if same(chessboard,newChessboard):
                         if COMPUTER == 1:
@@ -431,22 +430,25 @@ def singleMode():
                 if clearCondition(chessboard,COMPUTER):
                     clear_operation = 0
                     print 'clear operation:'
+                    drawchess.drawChessBoard(chessboard)
                     while clear_operation == 0:
+                        drawchess.drawChessBoard(chessboard)
                         candidates, warp, newChessboard = chess.getChess()
                         if same(chessboard,newChessboard):
                             clear_operation = 1
                     print np.array(chessboard)
 
-                if ifWin(COMPUTER):
+                if win(COMPUTER):
                     result = COMPUTER_WIN
                     break
-                if fullBoard(chessboard):
+                if draw():
                     result = DRAW
                     break
 
                 human_step = 0
                 print 'human step:'
                 while human_step == 0:
+                    drawchess.drawChessBoard(chessboard)
                     candidates, warp, newChessboard = chess.getChess()
                     result = valid(chessboard,newChessboard,HUMAN)
                     if result != 0:
@@ -458,16 +460,18 @@ def singleMode():
                 if clearCondition(chessboard,HUMAN):
                     clear_operation = 0
                     print 'clear operation:'
+                    drawchess.drawChessBoard(chessboard)
                     while clear_operation == 0:
+                        drawchess.drawChessBoard(chessboard)
                         candidates, warp, newChessboard = chess.getChess()
                         if same(chessboard,newChessboard):
                             clear_operation = 1
                     print np.array(chessboard)
 
-                if ifWin(HUMAN):
+                if win(HUMAN):
                     result = HUMAN_WIN
                     break
-                if fullBoard(chessboard):
+                if draw():
                     result = DRAW
                     break
         else:
