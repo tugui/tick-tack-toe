@@ -6,8 +6,8 @@
 """
 import sys
 import copy
-import readchess
 import drawchess
+import readchess
 import numpy as np
 
 # victory and defeat condition
